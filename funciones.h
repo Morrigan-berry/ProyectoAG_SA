@@ -2,6 +2,32 @@
 
 using namespace std;
 
+void printPobFit(vector<cromosoma>& pob){
+    for (int i = 0; i < pob.size(); ++i){
+        cout<<"fitness "<<i<<" : "<<pob.at(i).fitness<<endl;
+    }
+}
+void printPobStats(vector<cromosoma>& pob){
+    long double prom=0;
+    cout.precision(9);
+    for (int i = 0; i < pob.size(); i++){
+        prom=prom + pob.at(i).fitness;
+    }
+    prom = prom / pob.size();
+    cout<<"fitness promedio:  "<<prom<<endl;
+    long double sumatoria=0;
+    long double varianza=0;
+    for (int i = 0; i < pob.size(); i++){
+        sumatoria=sumatoria + pow(pob.at(i).fitness-prom,2);
+    }
+    varianza = sumatoria/(pob.size());
+    cout<<"varianza:  "<<varianza<<endl;
+    long double desviacion=sqrt(varianza);
+    cout<<"Desviacion "<<desviacion<<endl;
+    return;
+}
+
+
 void mutacion(vector<cromosoma>& hijos){
     vector<char> alf{'A', 'C', 'G', 'T'};
     random_device random;
@@ -25,24 +51,24 @@ void mutacion(vector<cromosoma>& hijos){
 }
 
 
-bool verificarVariabilidad(vector<cromosoma>& pob){
+//FALTA USAR DESVIACION O VARIZNZA PARA MUTAR
+bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar termino o estancamiento.
+    float lim = (float)filas*threshold;
     long double prom=0;
 	cout.precision(9);
 	for (int i = 0; i < pob.size(); i++){
-		prom=prom + pob.at(i).fitness;
+		prom = prom + pob.at(i).fitness;
 	}
 	prom = prom / pob.size();
-	cout<<"fitness promedio:  "<<prom<<endl;
-	long double sumatoria=0;
-	long double varianza=0;
+	long double sumatoria = 0;
+	long double varianza = 0;
 	for (int i = 0; i < pob.size(); i++){
-		sumatoria=sumatoria + pow(pob.at(i).fitness+prom,2);
+		sumatoria=sumatoria + pow(pob.at(i).fitness-prom,2);
 	}
-	varianza = sumatoria/(pob.size()-1);
-	cout<<"varianza:  "<<varianza<<endl;
+	varianza = sumatoria/(pob.size());
 	long double desviacion=sqrt(varianza);
-	cout<<"Desviacion "<<desviacion<<endl;
-    if(desviacion < 10) return true; //CAMBIAR AL EXPERIMENTAR
+    if(prom > lim) return true;
+    //if(desviacion<1) return true; 
     else return false;
 }
 
@@ -73,6 +99,7 @@ void setNewFitness(cromosoma& crom, vector<vector<char>>& mat ,float threshold){
                 break;
             }
         }
+        aux = 0;
     }
 
     crom.fitness = fitness;
@@ -130,9 +157,9 @@ void steady_state(vector<cromosoma>& poblacion_inicial, int limit_padres,int eli
         cromosoma best;
         int best_fit;
         
-        for (int i = 0; i < poblacion_inicial.size(); i++){
-            for (int j = 0; j < poblacion_inicial.size() - i; j++){
-                if(poblacion_inicial[j].fitness > poblacion_inicial[j + 1].fitness){
+        for (int i = 0; i < poblacion_inicial.size()-1; i++){
+            for (int j = 0; j < poblacion_inicial.size() - i-1; j++){
+                if(poblacion_inicial[j].fitness < poblacion_inicial[j + 1].fitness){
                     cromosoma aux = poblacion_inicial[j];
                     poblacion_inicial[j] = poblacion_inicial[j + 1];
                     poblacion_inicial[j + 1] = aux;
@@ -144,9 +171,9 @@ void steady_state(vector<cromosoma>& poblacion_inicial, int limit_padres,int eli
             new_pob.push_back(poblacion_inicial[i]); 
         }
 
-        for (int i = 0; i < nuevos.size(); i++){   
-            for (int j = 0; j < nuevos.size() - i; j++){
-                if(nuevos[j].fitness > nuevos[j + 1].fitness){
+        for (int i = 0; i < nuevos.size()-1; i++){   
+            for (int j = 0; j < nuevos.size() - i-1; j++){
+                if(nuevos[j].fitness < nuevos[j + 1].fitness){
                     cromosoma aux = nuevos[j];
                     nuevos[j] = nuevos[j + 1];
                     nuevos[j + 1] = aux;

@@ -246,11 +246,12 @@ int main(int argc, char *argv[])
 	vector<cromosoma> cruza;
 	int limit_padres = 10;
 	int i = 1;
-	cout<<"generacion: 1 "<<endl;
+	cout<<"generacion: 0 "<<endl;
+	printPobFit(pob);
+	printPobStats(pob); 
 	while(diff.count() < timeLimit){ //se detiene hasta que se acabe el tiempo limite de ejecución 
-		
+		cout<<endl;
 		//torneo se escogen los dos mejores padres de un conjunto 
-		
 		cromosoma padre1;
 		cromosoma padre2;
 		padre1=(torneo(pob)); 
@@ -264,26 +265,28 @@ int main(int argc, char *argv[])
 		padres.push_back(padre2);
 		nuevos_hijos.push_back(cruza.at(0));
 		nuevos_hijos.push_back(cruza.at(1));
-
-
 		cruza.clear();
 		//se genera una nueva población y se evalua ()
 		//10 padres x 2 hijos por par de padres =  10 hijos nuevos  + 15 poblacion inicial(incluye padres) = 25 total
 		// -> steady state() pob nueva 15 -> escojo 5 hijos de los mejores (nueva gen) y 5 padres de los mejores (gen vieja)
-		if (limit_padres == padres.size()){
-			cout<<"generacion: "<<i<<" "<<endl;
-			i++; //numero de iteración
-		}
 		steady_state(pob,limit_padres,5,nuevos_hijos,padres.size());
 		//ahora nuestra nueva población es nuestra población inicial de la siguiente iteración
+		//en caso de terminar antes break;
 		
-		//en caso de terminar antes break; 
-		bool termino = verificarVariabilidad(pob); 
-		if(termino) break;
-		//se actualiza el tiempo
+		cout<<"generacion: "<<i<<" "<<endl;
+		i++; //numero de iteración
+		printPobFit(pob);
+		printPobStats(pob); 
+		bool termino = verificar(pob,filas,threshold); 	
+		if(termino) {
+			end = chrono::high_resolution_clock::now();
+			diff = end - start;
+			break; //si todos cumplen el fitness se termina
+		}
+		bool desviacion = verificar(pob,filas,threshold);  
+		if(desviacion) mutacion(pob); //si no hay variabilidad se muta.
 		end = chrono::high_resolution_clock::now();
-		diff = end - start;
-
+		diff = end - start; 
 	}
 	return 0;
 }
