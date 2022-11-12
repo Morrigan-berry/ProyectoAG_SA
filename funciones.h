@@ -2,7 +2,25 @@
 
 using namespace std;
 
-void mutacion(vector<cromosoma>& pob){
+void mutacion(vector<cromosoma>& hijos){
+    vector<char> alf{'A', 'C', 'G', 'T'};
+    random_device random;
+    mt19937 engine{random()};
+    uniform_int_distribution <int> alfa_pos(0,3);
+    for (int h = 0; h < hijos.size(); h++){
+
+        for (int i = 0; i < hijos[h].gen.size(); i++){
+            if( (rand()%1) == 1 ){
+                int pos_aux = alfa_pos(engine);
+                while(hijos[h].gen[i] == alf[pos_aux]){ //asegurarse que no sea el mismo char que el gen del hijo
+                    int pos_aux = alfa_pos(engine);
+                }
+                hijos[h].gen[i] = alf[pos_aux];
+            }
+        }
+        
+    }
+    
     
 }
 
@@ -98,7 +116,7 @@ cromosoma torneo(vector <cromosoma>& poblacion){
     cromosoma padre1 = poblacion.at(pos1);
     cromosoma padre2 = poblacion.at(pos2);
    
-    if(padre1.fitness > padre2.fitness) ganador = padre1;
+    if(padre1.fitness >= padre2.fitness) ganador = padre1;
     else ganador = padre2;
 
     return ganador;

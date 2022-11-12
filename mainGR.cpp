@@ -246,35 +246,40 @@ int main(int argc, char *argv[])
 	vector<cromosoma> cruza;
 	int limit_padres = 10;
 	int i = 1;
-	
+	cout<<"generacion: 1 "<<endl;
 	while(diff.count() < timeLimit){ //se detiene hasta que se acabe el tiempo limite de ejecución 
 		
 		//torneo se escogen los dos mejores padres de un conjunto 
-		cout<<"generacion: "<<i<<" "<<endl;
+		
 		cromosoma padre1;
 		cromosoma padre2;
 		padre1=(torneo(pob)); 
 		padre2=(torneo(pob));
 		//Se recombina con los padres escogidos mediante una tecnica de cruzamiento (uniform crossover)
 		cruza = uniformCrossover(padre1,padre2); 		 
+		mutacion(cruza);
 		setNewFitness(cruza.at(0),vec1,threshold);
 		setNewFitness(cruza.at(1),vec1,threshold);
 		padres.push_back(padre1);
 		padres.push_back(padre2);
 		nuevos_hijos.push_back(cruza.at(0));
 		nuevos_hijos.push_back(cruza.at(1));
+
+
 		cruza.clear();
 		//se genera una nueva población y se evalua ()
 		//10 padres x 2 hijos por par de padres =  10 hijos nuevos  + 15 poblacion inicial(incluye padres) = 25 total
 		// -> steady state() pob nueva 15 -> escojo 5 hijos de los mejores (nueva gen) y 5 padres de los mejores (gen vieja)
-		
+		if (limit_padres == padres.size()){
+			cout<<"generacion: "<<i<<" "<<endl;
+			i++; //numero de iteración
+		}
 		steady_state(pob,limit_padres,5,nuevos_hijos,padres.size());
 		//ahora nuestra nueva población es nuestra población inicial de la siguiente iteración
 		
 		//en caso de terminar antes break; 
 		bool termino = verificarVariabilidad(pob); 
 		if(termino) break;
-		i++; //numero de iteración
 		//se actualiza el tiempo
 		end = chrono::high_resolution_clock::now();
 		diff = end - start;
