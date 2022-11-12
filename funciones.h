@@ -50,8 +50,6 @@ void mutacion(vector<cromosoma>& hijos){
     
 }
 
-
-//FALTA USAR DESVIACION O VARIZNZA PARA MUTAR
 bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar termino o estancamiento.
     float lim = (float)filas*threshold;
     long double prom=0;
@@ -68,7 +66,6 @@ bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar te
 	varianza = sumatoria/(pob.size());
 	long double desviacion=sqrt(varianza);
     if(prom > lim) return true;
-    //if(desviacion<1) return true; 
     else return false;
 }
 
@@ -149,8 +146,7 @@ cromosoma torneo(vector <cromosoma>& poblacion){
     return ganador;
 }
 
-void steady_state(vector<cromosoma>& poblacion_inicial, int limit_padres,int elitismo, vector<cromosoma>& nuevos, int padres_size){ //Elimina n viejos cromosomas y los reemplaza con n nuevos  **DECIDIR QUE ELIMINAR
-    if (padres_size >= limit_padres){
+void steady_state(vector<cromosoma>& poblacion_inicial,int elitismo, vector<cromosoma>& nuevos,vector<cromosoma>& padres){ //Elimina n viejos cromosomas y los reemplaza con n nuevos  **DECIDIR QUE ELIMINAR
         vector<cromosoma> new_pob; // antigua poblacion tomada 5
         vector<int> fitness_h; //posiciones tomadas
         
@@ -185,9 +181,8 @@ void steady_state(vector<cromosoma>& poblacion_inicial, int limit_padres,int eli
         }
         
         poblacion_inicial.clear();
+        padres.clear();
         poblacion_inicial = new_pob;
-
-    }else
         return;
 }
 

@@ -125,12 +125,12 @@ cromosoma greedy (float threshold,vector<vector<char>>& mat, vector<char>& vj,ve
 		reps_j.push_back(repeticiones['G']);
 		reps_j.push_back(repeticiones['T']);
 		
-		firstchoice(reps_j,sol,n_char_sol);	
-		record_pos_dif(vj,j,sol,solRep);
+		firstchoice(reps_j,sol,n_char_sol); //se mete a sol el caracterer menos repetido.	
+		record_pos_dif(vj,j,sol,solRep); //por columna se guarda en solRep cuantas filas difieren del caracter escogido 
 	}
-	
+	//hasta aqui se arma una sol con las menos repetidas en sol hasta el threshold
 
-	for (int j = lim; j < mat.at(0).size(); j++){
+	for (int j = lim; j < mat.at(0).size(); j++){ //desde donde se construyo se continua 
 		repeticiones['A'] = 0; //reciclamos el mapa repeticiones a un mapa de puntajes por 
 		repeticiones['C'] = 0;// letra a medida de que se revise una columna
 		repeticiones['G'] = 0;
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 		texts.push_back(s2);
 	}
 	texts.at(0) += "-001.txt"; //AHORA SOLO ESTAMOS USANDO LA INSTANCIA 1 DSP USAREMOS LAS OTRAS 
-
+	
 	vector<long double> promedios;
 	vector<char> alfabeto{'A', 'C', 'G', 'T'};
 	vector<vector<char>> vec1; 
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 	printPobFit(pob);
 	printPobStats(pob); 
 	while(diff.count() < timeLimit){ //se detiene hasta que se acabe el tiempo limite de ejecución 
-		cout<<endl;
+		
 		//torneo se escogen los dos mejores padres de un conjunto 
 		cromosoma padre1;
 		cromosoma padre2;
@@ -269,24 +269,36 @@ int main(int argc, char *argv[])
 		//se genera una nueva población y se evalua ()
 		//10 padres x 2 hijos por par de padres =  10 hijos nuevos  + 15 poblacion inicial(incluye padres) = 25 total
 		// -> steady state() pob nueva 15 -> escojo 5 hijos de los mejores (nueva gen) y 5 padres de los mejores (gen vieja)
-		steady_state(pob,limit_padres,5,nuevos_hijos,padres.size());
+		
+		
+
+		if(padres.size() >= limit_padres){
+			cout<<endl;
+			cout<<"generacion: "<<i<<" "<<endl;
+			i++; //numero de iteración
+			printPobFit(pob);
+			printPobStats(pob);
+			cout<<"tiempo actual:" <<diff.count() <<endl;
+			steady_state(pob,5,nuevos_hijos,padres);
+		}
+
 		//ahora nuestra nueva población es nuestra población inicial de la siguiente iteración
 		//en caso de terminar antes break;
-		
-		cout<<"generacion: "<<i<<" "<<endl;
-		i++; //numero de iteración
-		printPobFit(pob);
-		printPobStats(pob); 
 		bool termino = verificar(pob,filas,threshold); 	
 		if(termino) {
+			cout<<endl;
+			cout<<"generacion: "<<i<<" "<<endl;
+			i++; //numero de iteración
+			printPobFit(pob);
+			printPobStats(pob);
 			end = chrono::high_resolution_clock::now();
 			diff = end - start;
 			break; //si todos cumplen el fitness se termina
 		}
-		bool desviacion = verificar(pob,filas,threshold);  
-		if(desviacion) mutacion(pob); //si no hay variabilidad se muta.
 		end = chrono::high_resolution_clock::now();
-		diff = end - start; 
+		diff = end - start;
+
 	}
+	cout<<"tiempo termino:" <<diff.count() <<endl;
 	return 0;
 }
