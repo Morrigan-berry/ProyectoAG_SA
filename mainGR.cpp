@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     float threshold = stof(s6);
 	
 	
-	string texts = s2 + ".txt"; //AHORA SOLO ESTAMOS USANDO LA INSTANCIA 1 DSP USAREMOS LAS OTRAS 
+	string texts = s2 + ".txt";  
 	
 	vector<long double> promedios;
 	vector<char> alfabeto{'A', 'C', 'G', 'T'};
