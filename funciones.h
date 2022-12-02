@@ -28,26 +28,30 @@ void printPobStats(vector<cromosoma>& pob){
 }
 
 
-void mutacion(vector<cromosoma>& hijos){
+void mutacion2(vector<cromosoma>& vec,cromosoma mutvec){
+  
+    int h = rand()%vec.size();
+    for (int i = 0; i < vec[h].gen.size(); i++){
+        if( (rand()%1) == 1 ){
+            vec[h].gen[i] = mutvec.gen.at(i);
+        }
+    }    
+}
+void mutacion(vector<cromosoma>& vec){
     vector<char> alf{'A', 'C', 'G', 'T'};
     random_device random;
     mt19937 engine{random()};
     uniform_int_distribution <int> alfa_pos(0,3);
-    for (int h = 0; h < hijos.size(); h++){
-
-        for (int i = 0; i < hijos[h].gen.size(); i++){
-            if( (rand()%1) == 1 ){
+    int h = rand()%vec.size();
+    for (int i = 0; i < vec[h].gen.size(); i++){
+        if( (rand()%1) == 1 ){
+            int pos_aux = alfa_pos(engine);
+            while(vec[h].gen[i] == alf[pos_aux]){ //asegurarse que no sea el mismo char que el gen del hijo
                 int pos_aux = alfa_pos(engine);
-                while(hijos[h].gen[i] == alf[pos_aux]){ //asegurarse que no sea el mismo char que el gen del hijo
-                    int pos_aux = alfa_pos(engine);
-                }
-                hijos[h].gen[i] = alf[pos_aux];
             }
+            vec[h].gen[i] = alf[pos_aux];
         }
-        
-    }
-    
-    
+    }    
 }
 
 bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar termino o estancamiento.
