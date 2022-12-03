@@ -91,34 +91,7 @@ void firstchoice(vector<int> &rep, vector<char> &sol, vector<int> &n_char_sol){/
 
 }
 
-cromosoma getMutVec(float threshold,vector<vector<char>>& mat, vector<char>& vj,vector<int>& reps_j,vector<char>& alf,vector<char>& sol,vector <int>& n_char_sol,int filas,int columnas){
-	map<char,int> repeticiones;// mapa para saber cuanto se repiten los caracteres del alfabeto, se actualiza x columna
-    vector<int> solRep(filas, 0);// cuantos chars difieren de la solucion en una fila 
-    for (int j = 0; j < columnas; j++){ // x columna
-		vj.clear();
-		reps_j.clear();
-		repeticiones['A'] = 0;
-		repeticiones['C'] = 0;
-		repeticiones['G'] = 0;
-		repeticiones['T'] = 0;
-		for (int i = 0; i < mat.size(); i++){//
-			vj.push_back(mat.at(i).at(j)); //lleno la columna actual 
-		}
-		for(int k = 0; k < vj.size();k++){
-				repeticiones[vj.at(k)]++;
-		}
-		reps_j.push_back(repeticiones['A']);
-		reps_j.push_back(repeticiones['C']);
-		reps_j.push_back(repeticiones['G']);
-		reps_j.push_back(repeticiones['T']);
-		
-		firstchoice(reps_j,sol,n_char_sol); //se mete a sol el caracterer menos repetido.	
-		record_pos_dif(vj,j,sol,solRep); //por columna se guarda en solRep cuantas filas difieren del caracter escogido 
-	}
-	int fitness = notificar(solRep,columnas,columnas,filas); //calcula fitness 
-	cromosoma aux = {sol,fitness};
-	return aux;
-}
+
 
 //resuelve un archivo de texto. una instancia.
 cromosoma greedy (float threshold,vector<vector<char>>& mat, vector<char>& vj,vector<int>& reps_j,vector<char>& alf,vector<char>& sol,vector <int>& n_char_sol,int filas,int columnas){
@@ -260,9 +233,8 @@ int main(int argc, char *argv[])
 	auto start = chrono::high_resolution_clock::now();
 	auto end = chrono::high_resolution_clock::now();
 	chrono::duration<double> diff = end - start;
-	cromosoma mutRepVec;
+	vector<cromosoma> mutRepVec;
 	//Se inicia el algoritmo genetico con la población inicial ya creada y evaluada
-	mutRepVec = getMutVec(threshold,vec1,v_j,rep_j,alfabeto,s_g,scount_g,filas,columnas);
 	for ( int i = 0; i < pi ; i++){ // se genera la población inicial y se evalua el fitness respectivo.
 		crom_aux = greedy(threshold,vec1,v_j,rep_j,alfabeto,s_g,scount_g,filas,columnas);
 			
@@ -287,8 +259,7 @@ int main(int argc, char *argv[])
 		padre2=(torneo(pob));
 		//Se recombina con los padres escogidos mediante una tecnica de cruzamiento (uniform crossover)
 		cruza = uniformCrossover(padre1,padre2); 		 
-		//mutacion(cruza); 
-		//mutacion2(cruza,mutRepVec);
+		mutacion(cruza); 
 		setNewFitness(cruza.at(0),vec1,threshold);
 		setNewFitness(cruza.at(1),vec1,threshold);
 		padres.push_back(padre1);
@@ -304,7 +275,6 @@ int main(int argc, char *argv[])
 
 		if(padres.size() >= limit_padres){
 			mutacion(pob);
-			//mutacion2(pob,mutRepVec);
 			cout<<endl;
 			cout<<"generacion: "<<i<<" "<<endl;
 			i++; //numero de iteración

@@ -54,7 +54,7 @@ void mutacion(vector<cromosoma>& vec){
     }    
 }
 
-bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar termino o estancamiento.
+bool verificar(vector<cromosoma>& pob,int filas,float threshold){ //verificar termino.
     float lim = (float)filas*threshold;
     long double prom=0;
 	cout.precision(9);
@@ -150,7 +150,7 @@ cromosoma torneo(vector <cromosoma>& poblacion){
     return ganador;
 }
 
-void steady_state(vector<cromosoma>& poblacion_inicial,int elitismo, vector<cromosoma>& nuevos,vector<cromosoma>& padres){ //Elimina n viejos cromosomas y los reemplaza con n nuevos  **DECIDIR QUE ELIMINAR
+void steady_state(vector<cromosoma>& poblacion_inicial,int elitismo, vector<cromosoma>& nuevos,vector<cromosoma>& padres){ 
         vector<cromosoma> new_pob; // antigua poblacion tomada 5
         vector<int> fitness_h; //posiciones tomadas
         
@@ -189,19 +189,3 @@ void steady_state(vector<cromosoma>& poblacion_inicial,int elitismo, vector<crom
         poblacion_inicial = new_pob;
         return;
 }
-
-
-
-/*
-vector<int>:: iterator it;
-        sort(pos_chosen.begin(),pos_chosen.end());
-        int old_size = pos_chosen.size();
-        int new_size = old_size;
-
-while(new_size != old_size){ //loops para sacar nros de posiciones que se repiten
-            int new_size = old_size;//se hace un aseguramiento de que new size es igual a old size
-            it = unique(pos_chosen.begin(),pos_chosen.end()); // se usa funcion unique para borrar copias
-            pos_chosen.resize(distance(pos_chosen.begin(), it)); //se usa rezice por si se borraron elementos
-            new_size = pos_chosen.size(); // luego se actualiza el valor de new size
-        }
-*/
